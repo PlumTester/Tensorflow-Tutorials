@@ -1,0 +1,11 @@
+https://www.tensorflow.org/tutorials/keras/keras_tuner
+
+https://www.tensorflow.org/tutorials/quickstart/advanced
+
+https://www.tensorflow.org/tutorials/keras/classification
+
+https://www.tensorflow.org/tutorials/customization/basics
+
+https://www.tensorflow.org/tutorials/load_data/csv
+
+https://www.tensorflow.org/tutorials/distribute/keras
