@@ -26,6 +26,8 @@ import pathlib
 import shutil
 import tempfile
 
+import os
+
 print(tf.__version__)
 print()
 
@@ -119,7 +121,7 @@ _ = plt.ylabel('Learning Rate')
 # plt.show()
 plt.close()
 
-# tfdocs.EpochDots simpl prints a . for each epoch and full set of metrics every 100 epochs
+# tfdocs.EpochDots simply prints a . for each epoch and full set of metrics every 100 epochs
 # this reduces the logging noise
 # EarlyStopping callback avoids long / unecessary training times
 #       monitors val_binary_crossentropy, not val_loss - IMPORTANT LATER
@@ -275,18 +277,57 @@ regularizer_histories['l2']  = compile_and_fit(l2_model, 'regularizers/l2')
 
 plotter.plot(regularizer_histories)
 plt.ylim([0.5, 0.7])
-plt.show()
+# plt.show()
+plt.close()
+
+# Add Dropout
+# Dropout - applied to a layer - randomly sets number of output features of layer to zero during training, commonly used regularization techniques
+#   dropout rate- fraction of features that are being zero-ed out (usually between 0.2, 0.5)
+#   individual nodes cannot rely on output of others
+#   during testing, no values are dropped - instead layer's output values scaled down by a factor equal to dropout rate (balance for the fact more units are active than at training)
+
+# eg [0.2, 0.5, 1.3, 0.8, 1.1] output becomes [0, 0.5, 1.3, 0, 1.1]
+
+dropout_model = tf.keras.Sequential([ \
+                                        layers.Dense(512, activation='elu', input_shape=(FEATURES,)), \
+                                        layers.Dropout(0.5), \
+                                        layers.Dense(512, activation='elu'), \
+                                        layers.Dropout(0.5), \
+                                        layers.Dense(512, activation='elu'), \
+                                        layers.Dropout(0.5), \
+                                        layers.Dense(1) \
+                                    ])
+
+regularizer_histories['dropout'] = compile_and_fit(dropout_model, "regularizers/dropout")
+
+# note dropout improves Large performance
+plotter.plot(regularizer_histories)
+plt.ylim([0.5, 0.7])
+# plt.show()
 plt.close()
 
 
+# L2 and dropout combined
+combined_model = tf.keras.Sequential([
+                                        layers.Dense(512, kernel_regularizer=regularizers.l2(0.0001), activation='elu', input_shape=(FEATURES,)), \
+                                        layers.Dropout(0.5), \
+                                        layers.Dense(512, kernel_regularizer=regularizers.l2(0.0001), activation='elu'), \
+                                        layers.Dropout(0.5), \
+                                        layers.Dense(512, kernel_regularizer=regularizers.l2(0.0001), activation='elu'), \
+                                        layers.Dropout(0.5), \
+                                        layers.Dense(512, kernel_regularizer=regularizers.l2(0.0001), activation='elu'), \
+                                        layers.Dropout(0.5), \
+                                        layers.Dense(1) \
+                                    ])
 
+regularizer_histories['combined'] = compile_and_fit(combined_model, "regularizers/combined")
 
+# note best solution by far
+plotter.plot(regularizer_histories)
+plt.ylim([0.5, 0.7])
+plt.show()
+plt.close()
 
-
-
-
-
-
-
-
+# View models in TensorBoard
+# os.system("tensorboard --logdir tensorboard_logs/regularizers")
 
