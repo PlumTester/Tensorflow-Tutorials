@@ -133,8 +133,6 @@ def time_series_windowing():
 
     print('-')
 
-
-
     return
 
 

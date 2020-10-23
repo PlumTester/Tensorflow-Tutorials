@@ -11,6 +11,11 @@ def main():
 
     train_images, train_labels, test_images, test_labels, class_names = load_verify_data()
 
+    # print(train_images[0:])
+    print(train_labels[:4])
+
+    quit()
+
     # create convolutional base
     model = models.Sequential()
     model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
